@@ -1,0 +1,490 @@
+const svgHeight = 1600;
+const svgOffset = 5;
+const svgWidth = 4800;
+const boardMargin = 50;
+const baseWidth = (svgWidth - boardMargin) / 30;
+const alignOffset = 3;
+var data = {};
+const wave = {
+    width: baseWidth,
+    margin: {
+        horizontal: baseWidth * 1.0,
+        vertical: baseWidth * 0.1,
+    },
+    padding: {
+        first: baseWidth * 0.25,
+        vertical: baseWidth * 0.25,
+    },
+};
+
+const eigenfunction = {
+    height: svgHeight / 17,
+    width: 0.90 * wave.width,
+    margin: {
+        horizontal: (wave.width - 0.90 * wave.width) / 2,
+        vertical: (wave.width - 0.90 * wave.width) / 2,
+    }
+}
+
+const button = {
+    height: eigenfunction.height * 0.25,
+    width: eigenfunction.height * 0.25,
+    margin: eigenfunction.height * 0.05
+}
+
+console.log(data);
+const leftedge = (id) => {
+    let wv = data.waves.filter(function(e, i) {
+            return e.states.filter(function(f, j) {
+                    return (id === f.id);
+                })
+                .length;
+        })
+        .pop();
+    let st = wv.states.filter(function(e, i) {
+            return (e.id === id);
+        })
+        .pop();
+    // st.y is not set  for all subsequent ys so it must be computed.
+    return {
+        x: wv.position * (wave.width + wave.margin.horizontal) + eigenfunction.margin.horizontal + boardMargin,
+        y: st.wave_y + st.rank * (eigenfunction.height + eigenfunction.margin.vertical) + wave.padding.vertical + eigenfunction.height / 2
+
+    };
+}
+
+const leftedgeflange = (id) => {
+    let le = leftedge(id);
+    le.x -= wave.margin.horizontal * 0.1;
+    return le;
+}
+
+const leftedgetopflange = (id) => {
+    let le = leftedge(id);
+    le.x -= (wave.margin.horizontal * 0.1) * 2;
+    le.y = boardMargin;
+    return le;
+}
+
+const rightedge = (id) => {
+    let re = leftedge(id);
+    re.x += eigenfunction.width;
+    return re;
+}
+
+const rightedgeflange = (id) => {
+    let re = rightedge(id);
+    re.x += wave.margin.horizontal * 0.1;
+    return re;
+}
+
+const rightedgetopflange = (id) => {
+    let re = rightedge(id);
+    re.x += (wave.margin.horizontal * 0.1) * 2;
+    re.y = boardMargin;
+    return re;
+}
+
+const format = (pair) => {
+    return pair.x + "," + pair.y;
+}
+
+const drawBoard = (data, res) => {
+    let board = d3.select("div#svg")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+        .attr("game", data.game)
+        .attr("class", "game");
+
+    let waves = board.selectAll("rect.waveBox")
+        .data(data.waves)
+        .enter()
+        .append("g")
+        .attr("class", "wave")
+        .attr("id", function(d, i) {
+            return "wave_" + d.id;
+        });
+
+    let title = board.selectAll('text.title');
+    title.data(data)
+        .enter()
+        .append("text")
+        .attr("x", svgOffset)
+        .attr("text-anchor", function(e, i) {
+            return "middle";
+        })
+        .attr("y", function(e, i) {
+            return svgOffset;
+        })
+        .attr("dy", function(e, i) {
+            return eigenfunction.margin.vertical;
+        })
+        .attr("class", function(e, i) {
+            return "title";
+        })
+        .text(function(e, i) {
+            return e.title;
+        });
+
+    waves.append("rect")
+        .attr("width", function(d, i) {
+            return wave.width;
+        })
+        .attr("x", function(d, i) {
+            d.x = d.position * (wave.width + wave.margin.horizontal) + boardMargin;
+            d.states.forEach(function(s, i) {
+                s.wave_x = d.x;
+            });
+            return d.x
+        })
+        .attr("height", function(d, i) {
+            return d.states.length * (eigenfunction.height) + (d.states.length - 1) * eigenfunction.margin.vertical + wave.margin.vertical + wave.padding.vertical;
+        })
+        .attr("y", function(d, i) {
+            d.y =
+                svgHeight / svgOffset - d.states.length / 2 * (eigenfunction.height + eigenfunction.margin.vertical) + (d.align * alignOffset + 1.5) * (eigenfunction.height + eigenfunction.margin.vertical);
+            d.states.forEach(function(s, i) {
+                s.wave_y = d.y;
+            });
+            return d.y;
+        })
+        .attr("class", function(d, i) {
+            return "waveBox";
+        })
+        // new stuff here
+        .each(function(d, i) {
+            let w = d3.select(this.parentElement);
+            w.selectAll("rect.stateBox")
+                .data(d.states)
+                .enter()
+                .append("rect")
+                .attr("id", function(e, j) {
+                    return "state_" + e.id;
+                })
+                .attr("width", function(e, i) {
+                    return eigenfunction.width;
+                })
+                .attr("x", function(e, i) {
+                    e.x = e.wave_x + eigenfunction.margin.horizontal;
+                    return e.x;
+                })
+                .attr("height", function(e, i) {
+                    return eigenfunction.height;
+                })
+                .attr("y", function(e, i) {
+                    e.y = e.wave_y + wave.padding.first + (e.rank) * (eigenfunction.height + eigenfunction.margin.vertical);
+                    return e.y;
+                })
+                .attr("class", function(d, i) {
+                    return "stateBox" + (d.closed ? " closed" : " open") + (d.triggered ? " triggered" : "") + (d.resolved ? " resolved" : "");
+                })
+                .each(function(f, k) {
+                    if (f.target.length) {
+                        board.selectAll("polyline.link_".k)
+                            .data(f.target)
+                            .enter()
+                            .append("polyline")
+                            .attr("class", function(g, l) {
+                                return "link";
+                            })
+                            .attr("id", function(g, l) {
+                                return "link_" + f.id + "_" + g
+                            })
+                            .attr("points", function(g, l) {
+                                let source = f.id;
+                                let target = g;
+                                let position = "";
+                                if (f.eigenfunction_id == 23) {
+                                    position = format(rightedge(source)) + " " + format(rightedgeflange(source)) + " " + format(rightedgetopflange(source)) + " " + " " + format(leftedgetopflange(target)) + " " + format(leftedgeflange(target)) + " " + format(leftedge(target));
+                                } else {
+                                    position = format(rightedge(source)) + " " + format(rightedgeflange(source)) + " " + format(leftedgeflange(target)) + " " + format(leftedge(target));
+                                }
+
+                                return position;
+                            });
+                    }
+                });
+
+            w.selectAll("text.stateLabel")
+                .data(d.states)
+                .enter()
+                .append("text")
+                .attr("x", function(e, i) {
+                    return e.x + eigenfunction.width / 2;
+                })
+                .attr("text-anchor", function(e, i) {
+                    return "middle";
+                })
+                .attr("y", function(e, i) {
+                    return e.y + eigenfunction.margin.vertical;
+                })
+                .attr("dy", function(e, i) {
+                    return eigenfunction.margin.vertical;
+                })
+                .attr("class", function(e, i) {
+                    return "stateLabel";
+                })
+                .text(function(e, i) {
+                    return e.eigenfunction_id + '. ' + e.description + (e.trigger ? " ; " + e.trigger : "");
+                });
+
+            w.selectAll("text.scoringLabel")
+                .data(d.states)
+                .enter()
+                .append("text")
+                .attr("x", function(e, i) {
+                    return e.x + eigenfunction.width - eigenfunction.margin.horizontal;
+                })
+                .attr("text-anchor", function(e, i) {
+                    return "end";
+                })
+                .attr("dominant-baseline", function(e, i) {
+                    return "text-before-edge";
+                })
+                .attr("y", function(e, i) {
+                    return e.y + eigenfunction.height - eigenfunction.margin.vertical;
+                })
+                .attr("dy", function(e, i) {
+                    return "-0.75em";
+                })
+                .attr("dx", function(e, i) {
+                    return "0.5em";
+                })
+                .attr("class", function(e, i) {
+                    return "scoringLabel";
+                })
+                .text(function(e, i) {
+                    return e.scoring ? e.scoring : "";
+                });
+            if (resources) {
+                w.selectAll("rect.pigBox")
+                    .data(d.states)
+                    .enter()
+                    .append("rect")
+                    .attr("state", function(d, j) {
+                        return d.id;
+                    })
+                    .attr("width", function(d, i) {
+                        return button.width;
+                    })
+                    .attr("x", function(d, i) {
+                        return d.x + eigenfunction.margin.horizontal;
+                    })
+                    .attr("height", function(d, i) {
+                        return button.height;
+                    })
+                    .attr("y", function(d, i) {
+                        return d.y - eigenfunction.margin.vertical + eigenfunction.height - button.height;
+                    })
+                    .attr("type", function(d, i) {
+                        return "pig";
+                    })
+                    .attr("class", function(d, i) {
+                        return "pig resourceButton";
+                    });
+                w.selectAll("text.pig.resourceLabel")
+                    .data(d.states)
+                    .enter()
+                    .append("text")
+                    .attr("state", function(d, j) {
+                        return d.id;
+                    })
+                    .attr("x", function(d, i) {
+                        return d.x + eigenfunction.margin.horizontal + button.width / 2;
+                    })
+                    .attr("text-anchor", function(d, i) {
+                        return "middle";
+                    })
+                    .attr("y", function(d, i) {
+                        return d.y - eigenfunction.margin.vertical + eigenfunction.height - button.height
+                    })
+                    .attr("dy", function(d, i) {
+                        return eigenfunction.margin.vertical * 2;
+                    })
+                    .attr("type", function(d, i) {
+                        return "pig";
+                    })
+                    .attr("class", function(d, i) {
+                        return "pig resourceLabel";
+                    })
+                    .text(function(d, i) {
+                        return "P:" + d.pigs;
+                    });
+                w.selectAll("rect.dogBox")
+                    .data(d.states)
+                    .enter()
+                    .append("rect")
+                    .attr("state", function(d, j) {
+                        return d.id;
+                    })
+                    .attr("width", function(d, i) {
+                        return button.width;
+                    })
+                    .attr("x", function(d, i) {
+                        return d.x + eigenfunction.margin.horizontal + button.margin + button.width;
+                    })
+                    .attr("height", function(d, i) {
+                        return button.height;
+                    })
+                    .attr("y", function(d, i) {
+                        return d.y - eigenfunction.margin.vertical + eigenfunction.height - button.height;
+                    })
+                    .attr("type", function(d, i) {
+                        return "dog";
+                    })
+                    .attr("class", function(d, i) {
+                        return "dog resourceButton";
+                    });
+                w.selectAll("text.dog.resourceLabel")
+                    .data(d.states)
+                    .enter()
+                    .append("text")
+                    .attr("state", function(d, j) {
+                        return d.id;
+                    })
+                    .attr("x", function(d, i) {
+                        return d.x + eigenfunction.margin.horizontal + button.margin + button.width + button.width / 2;
+                    })
+                    .attr("text-anchor", function(d, i) {
+                        return "middle";
+                    })
+                    .attr("y", function(d, i) {
+                        return d.y - eigenfunction.margin.vertical + eigenfunction.height - button.height
+                    })
+                    .attr("dy", function(d, i) {
+                        return eigenfunction.margin.vertical * 2;
+                    })
+                    .attr("type", function(d, i) {
+                        return "dog";
+                    })
+                    .attr("class", function(d, i) {
+                        return "dog resourceLabel";
+                    })
+                    .text(function(d, i) {
+                        return "D:" + d.dogs;
+                    });
+                w.selectAll("rect.sheepBox")
+                    .data(d.states)
+                    .enter()
+                    .append("rect")
+                    .attr("state", function(d, j) {
+                        return d.id;
+                    })
+                    .attr("width", function(d, i) {
+                        return button.width;
+                    })
+                    .attr("x", function(d, i) {
+                        return d.x + 2 * (button.margin + button.width) + eigenfunction.margin.horizontal;
+                    })
+                    .attr("height", function(d, i) {
+                        return button.height;
+                    })
+                    .attr("y", function(d, i) {
+                        return d.y - eigenfunction.margin.vertical + eigenfunction.height - button.height;
+                    })
+                    .attr("type", function(d, i) {
+                        return "sheep";
+                    })
+                    .attr("class", function(d, i) {
+                        return "sheep resourceButton";
+                    });
+                w.selectAll("text.sheep.resourceLabel")
+                    .data(d.states)
+                    .enter()
+                    .append("text")
+                    .attr("state", function(d, j) {
+                        return d.id;
+                    })
+                    .attr("x", function(d, i) {
+                        return d.x + 2 * (button.margin + button.width) + eigenfunction.margin.horizontal + button.width / 2;
+                    })
+                    .attr("text-anchor", function(d, i) {
+                        return "middle";
+                    })
+                    .attr("y", function(d, i) {
+                        return d.y - eigenfunction.margin.vertical + eigenfunction.height - button.height
+                    })
+                    .attr("dy", function(d, i) {
+                        return eigenfunction.margin.vertical * 2;
+                    })
+                    .attr("type", function(d, i) {
+                        return "sheep";
+                    })
+                    .attr("class", function(d, i) {
+                        return "sheep resourceLabel";
+                    })
+                    .text(function(d, i) {
+                        return "S:" + d.sheep;
+                    });
+            }
+        })
+
+    waves.append("text")
+        .attr("x", function(d, i) {
+            return d.x + wave.width / 2
+        })
+        .attr("text-anchor", function(d, i) {
+            return "middle";
+        })
+        .attr("y", function(d, i) {
+            return svgHeight / svgOffset - d.states.length / 2 * (eigenfunction.height + eigenfunction.margin.vertical) + (d.align * alignOffset + 1.5) * (eigenfunction.height + eigenfunction.margin.vertical) + eigenfunction.margin.vertical
+        })
+        .attr("dy", function(d, i) {
+            return eigenfunction.margin.vertical;
+        })
+        .attr("class", function(d, i) {
+            return "waveLabel";
+        })
+        .text(function(d, i) {
+            return d.name;
+        });
+
+    waves.selectAll(".stateLabel")
+        .call(wrap, eigenfunction.width * 0.95);
+    waves.selectAll(".waveLabel")
+        .call(wrap, eigenfunction.width * 0.95);
+}
+
+const wrap = (text, width) => {
+    text.each(function() {
+        let text = d3.select(this),
+            words = text.text()
+            .split(/\s+/)
+            .reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            linePad = 1.2,
+            y = text.attr("y"),
+            x = text.attr("x"),
+            dy = parseFloat(text.attr("dy")),
+            tspan = text.text(null)
+            .append("tspan")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("dy", dy);
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (word == ";" ||
+                tspan.node()
+                .getComputedTextLength() > width) {
+                line.pop();
+                ++lineNumber
+                tspan.text(line.join(" "));
+                if (word == ";") {
+                    ++lineNumber;
+                    line = [];
+                } else {
+                    line = [word];
+                }
+                tspan = text.append("tspan")
+                    .attr("x", x)
+                    .attr("y", y)
+                    .attr("dy", (1 + lineNumber) * linePad * dy)
+                    .text(word);
+            }
+        }
+    });
+}

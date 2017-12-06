@@ -1,0 +1,40 @@
+{% extends 'wave/wave.html.twig' %}
+
+{% block content %}
+    <h1>Wave</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Position</th>
+                <td>{{ wave.position }}</td>
+            </tr>
+            <tr>
+                <th>Align</th>
+                <td>{{ wave.align }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ wave.description }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ wave.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('wave_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('wave_edit', { 'wave': wave.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock content %}

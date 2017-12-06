@@ -1,0 +1,36 @@
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+doctrine:
+    dbal:
+        connections:
+            default:
+                driver: pdo_sqlite
+                memory: true
+                # path: "%kernel.root_dir%/../var/dbtest.sqlite"
+                logging: true
+                profiling: false
+    orm:
+        mappings:
+            LthrtEntityBundle:
+                type: annotation
+                dir: '%kernel.project_dir%/vendor/lthrt/entity-bundle/Lthrt/EntityBundle/Entity'
+                prefix: Lthrt\EntityBundle\Entity
+            LthrtTestEntityBundle:
+                type: annotation
+                dir: '%kernel.project_dir%/vendor/lthrt/entity-bundle/Lthrt/EntityBundle/Tests/Entity'
+                prefix: Lthrt\EntityBundle\Tests\Entity

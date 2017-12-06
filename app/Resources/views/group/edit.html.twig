@@ -1,0 +1,11 @@
+{% extends 'group/group.html.twig' %}
+
+{% block content %}
+    <h1>Group update</h1>
+    {% include '/group/form.html.twig' %}
+    <ul>
+        <li>
+            <a href="{{ path('group_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock content %}

@@ -1,0 +1,46 @@
+{% extends 'state/state.html.twig' %}
+
+{% block content %}
+    <h1>States list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sheep</th>
+                <th>Dogs</th>
+                <th>Pigs</th>
+                <th>Resolved</th>
+                <th>Closed</th>
+                <th>Triggered</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for state in states %}
+            <tr>
+                <td><a href="{{ path('state_show', { 'state': state.id }) }}">{{ state.sheep }}</a></td>
+                <td>{{ state.dogs }}</td>
+                <td>{{ state.pigs }}</td>
+                <td>{% if state.resolved %}Yes{% else %}No{% endif %}</td>
+                <td>{% if state.closed %}Yes{% else %}No{% endif %}</td>
+                <td>{% if state.triggered %}Yes{% else %}No{% endif %}</td>
+                <td>{{ state.id }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('state_edit', { 'state': state.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('state_new') }}">Create a new state</a>
+        </li>
+    </ul>
+{% endblock content %}

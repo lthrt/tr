@@ -1,0 +1,12 @@
+{% extends 'game/game.html.twig' %}
+{% block main %}
+{% for game in games %}
+<li>
+<a href="{{url('game_show', {'game' : game.id })}}">{{game.description}}</a>
+</li>
+{% endfor %}
+<br/>
+<li>
+<a href="{{url('game_new')}}">New Game</a>
+</li>
+{% endblock main %}

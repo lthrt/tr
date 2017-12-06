@@ -1,0 +1,28 @@
+
+const getNewData = (url) => {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        xhr.onload = () => resolve(JSON.parse(xhr.responseText));
+        xhr.onerror = () => reject(xhr.statusText);
+        xhr.send();
+    });
+}
+
+const wire = () => {
+    let board = document.querySelector('div#svg');
+    board.addEventListener("click", function(event) {
+        let state = event.target.getAttribute("state");
+        let type = event.target.getAttribute("type");
+        let wave = event.target.closest('g.wave');
+        if (wave) {
+            let clicked = wave.querySelector('rect.resourceButton[type="' + type + '"][state="' + state + '"]');
+            let url = "{{ app.request.getBaseURL()|raw }}" + "/state/" + clicked.getAttribute("state") + "/add" + clicked.getAttribute("type");
+            let newData = refreshBoard(url);
+        }
+    })
+}
+
+(function() {
+    wire();
+})();

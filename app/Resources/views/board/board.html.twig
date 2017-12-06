@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{%- block brand -%}
+    {%- include 'header/brand.html.twig' -%}
+{%- endblock brand -%}
+{%- block sidebar_content -%}
+    {% include 'sidebar/sidebar.html.twig' %}
+{%- endblock sidebar_content -%}
+{% set page_title='TimeReich' %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% include 'board/board.css.html.twig' %}
+{% endblock stylesheets %}
+{% block content %}
+    <div id="svg"></div>
+    {% include 'cdn/d3.min.js.html.twig' %}
+    {% include 'board/board.js.html.twig' %}
+    {% include 'board/template.js.html.twig' %}
+{% endblock content %}

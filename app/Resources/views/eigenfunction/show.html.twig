@@ -1,0 +1,40 @@
+{% extends 'eigenfunction/eigenfunction.html.twig' %}
+
+{% block content %}
+    <h1>Eigenfunction</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Trigger</th>
+                <td>{{ eigenfunction.trigger }}</td>
+            </tr>
+            <tr>
+                <th>Scoring</th>
+                <td>{{ eigenfunction.scoring }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ eigenfunction.description }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ eigenfunction.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('eigenfunction_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('eigenfunction_edit', { 'eigenfunction': eigenfunction.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock content %}

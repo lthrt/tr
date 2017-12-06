@@ -1,0 +1,40 @@
+{% extends 'eigenfunction/eigenfunction.html.twig' %}
+
+{% block content %}
+    <h1>Eigenfunctions list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Trigger</th>
+                <th>Scoring</th>
+                <th>Description</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for eigenfunction in eigenfunctions %}
+            <tr>
+                <td><a href="{{ path('eigenfunction_show', { 'eigenfunction': eigenfunction.id }) }}">{{ eigenfunction.trigger }}</a></td>
+                <td>{{ eigenfunction.scoring }}</td>
+                <td>{{ eigenfunction.description }}</td>
+                <td>{{ eigenfunction.id }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('eigenfunction_edit', { 'eigenfunction': eigenfunction.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('eigenfunction_new') }}">Create a new eigenfunction</a>
+        </li>
+    </ul>
+{% endblock content %}

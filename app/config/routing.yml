@@ -1,0 +1,19 @@
+tr:
+    resource: "@TRBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+# lthrt_entity:
+#     resource: "@LthrtEntityBundle/Controller/"
+#     type:     annotation
+
+lthrt_user:
+    resource: "@LthrtUserBundle/Controller/"
+    type:     annotation
+
+lthrt_schema_visualizer:
+    resource: "@LthrtSchemaVisualizerBundle/Controller/"
+    type:     annotation
+
+logout:
+    path: /logout

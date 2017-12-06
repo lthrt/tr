@@ -1,0 +1,16 @@
+services:
+   tr.game_data:
+       class: TRBundle\Model\GameData
+       arguments: ["@doctrine.orm.entity_manager"]
+
+   tr.game_maker:
+       class: TRBundle\Model\GameMaker
+       arguments: ["@doctrine.orm.entity_manager"]
+
+   tr.move_denier:
+       class: TRBundle\Model\MoveDenier
+       arguments: ["@doctrine.orm.entity_manager"]
+
+   tr.wave_resolver:
+       class: TRBundle\Model\WaveResolver
+       arguments: ["@doctrine.orm.entity_manager"]

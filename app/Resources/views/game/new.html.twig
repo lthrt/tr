@@ -1,0 +1,11 @@
+{% extends 'game/game.html.twig' %}
+
+{% block content %}
+    <h1>Game creation</h1>
+    {% include '/game/form.html.twig' %}
+    <ul>
+        <li>
+            <a href="{{ path('game_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends 'board/board.html.twig' %}
+{% block content %}
+        <a href="{{url('state_move_player', {'state':1, 'player':1})}}">Move</a>
+    <div id="svg"></div>
+{% endblock content %}
+{% block javascripts %}
+    {{parent()}}
+    {% include 'cdn/d3.min.js.html.twig' %}
+    {% include 'board/board.css.html.twig' %}
+    {% include 'board/game.js.html.twig' %}
+{% endblock javascripts %}

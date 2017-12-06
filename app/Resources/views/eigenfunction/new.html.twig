@@ -1,0 +1,11 @@
+{% extends 'eigenfunction/eigenfunction.html.twig' %}
+
+{% block content %}
+    <h1>Eigenfunction creation</h1>
+    {% include '/eigenfunction/form.html.twig' %}
+    <ul>
+        <li>
+            <a href="{{ path('eigenfunction_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock content %}

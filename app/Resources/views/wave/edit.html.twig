@@ -1,0 +1,11 @@
+{% extends 'wave/wave.html.twig' %}
+
+{% block body %}
+    <h1>Wave update</h1>
+    {% include '/wave/form.html.twig' %}
+    <ul>
+        <li>
+            <a href="{{ path('wave_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock body %}

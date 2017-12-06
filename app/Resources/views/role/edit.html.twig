@@ -1,0 +1,11 @@
+{% extends 'role/role.html.twig' %}
+
+{% block body %}
+    <h1>Role update</h1>
+    {% include '/role/form.html.twig' %}
+    <ul>
+        <li>
+            <a href="{{ path('role_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock body %}

@@ -1,0 +1,11 @@
+{% extends 'state/state.html.twig' %}
+
+{% block content %}
+    <h1>State creation</h1>
+    {% include '/state/form.html.twig' %}
+    <ul>
+        <li>
+            <a href="{{ path('state_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock content %}

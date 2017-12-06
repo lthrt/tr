@@ -1,0 +1,40 @@
+{% extends 'user/user.html.twig' %}
+
+{% block content %}
+    <h1>Users list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td><a href="{{ path('user_show', { 'user': user.id }) }}">{{ user.username }}</a></td>
+                <td>{{ user.email }}</td>
+                <td>{% if user.active %}Yes{% else %}No{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('user_edit', { 'user': user.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('user_new') }}">Create a new user</a>
+        </li>
+    </ul>
+{% endblock content %}

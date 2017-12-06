@@ -1,0 +1,8 @@
+<script>
+    var resources = {% if resources is defined %}{{resources}}{% else %}true{% endif %};
+    {% include 'board/data.js.twig' %}
+    {% include 'board/board.js.twig' %}
+    {% include 'board/template.js.twig' %}
+    {% include 'board/game.js.twig' %}
+</script>
+

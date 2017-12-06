@@ -1,0 +1,40 @@
+{% extends 'wave/wave.html.twig' %}
+
+{% block content %}
+    <h1>Waves list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Align</th>
+                <th>Description</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for wave in waves %}
+            <tr>
+                <td><a href="{{ path('wave_show', { 'wave': wave.id }) }}">{{ wave.position }}</a></td>
+                <td>{{ wave.align }}</td>
+                <td>{{ wave.description }}</td>
+                <td>{{ wave.id }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('wave_edit', { 'wave': wave.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('wave_new') }}">Create a new wave</a>
+        </li>
+    </ul>
+{% endblock content %}
